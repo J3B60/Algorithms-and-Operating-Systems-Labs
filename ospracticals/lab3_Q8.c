@@ -1,15 +1,15 @@
 #include <stdio.h>
 
 void main(){
-	static int count = 0;
-	int ret;
+	int ret = fork();
+	int count = 0;
 	while (count < 10){
-		ret = fork();
 		if (ret == 0){
-			printf("Child process: counter=%d", count);
+			printf("Child process: counter=%d\n", count);
 		} else {
-			printf("Parent process: counter=%d", count);
+			printf("Parent process: counter=%d\n", count);
 		}
+		count++;
 		sleep(1);
 	}
 }
