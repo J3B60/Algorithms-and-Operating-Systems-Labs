@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#define N 3 	/* define the total number of processes we want */
+#include <pthread.h>
+#define N 16 	/* define the total number of processes we want */
 
 float total=0;	/* Set gloval variable */
 
@@ -21,34 +22,52 @@ int compute(int pid)	/* compute function just does something. */
 	total = total + result;
 	
 	/* Print running total so far. */
-	printf("Total of %d is %f\n", pid, total);
+	printf("Total of %d isread_crea %f\n", pid, total);
 	
 	return 0;
 } //continue
 
 int main()
-{
+{	pthread_t threads[N];
+	pthread_attr_t attr;
+	int rc;
+	long t;
+	void *status;
+	//
 	int cid[N], i, pid;
 	
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	printf("\n"); /* bit of whitespace */
 	
 	/* to loop and create the required number of processes */
 	/* NOTE carefully how only the child process is left to run */
 	for(i=0;i<N;i++)
-	{ /* DO the fork and catch it if it/one fails */
-		if((cid[i]=fork())==-1) exit(1);
+	{ /* DO the pthread and catch it if it/one fails */
+		if(rc=pthread_create(&threads[i], &attr, compute,pid)) exit(-1);
 		/* a child? Yes, do our computation */
-		else if(cid[i] > 0)
+		else
 		{ /* give message about the proc ID */
 			pid = getpid();
 			printf("Process ID for process %d is %d\n", i, pid);
 			
 			/* call the function to do some computation */
-			compute(pid);
+			//compute(pid);//DONTNEED???????
 			
 			/* After computation, quit. OR process creation will bom! */
 			break;
 		}
 	}
-	return 0;
+	/* Pthread Joining */
+	pthread_attr_destroy(&attr);
+	for(t=0; t<N; t++){
+		rc = pthread_join(threads[t], &status);
+		//if(rc) {
+		//	exit(-1);
+		//}
+		//printf()
+	}
+	pthread_exit(NULL);
 }
+//pthread_join();
+//shift+H Report thread
