@@ -1,15 +1,16 @@
 #include <stdio.h>
 
+int count = 0;//Global counter
+
 void main(){
 	int ret = fork();
-	int count = 0;
-	while (count < 10){
+	while (count < 200){
 		if (ret == 0){
-			printf("Child process: counter=%d\n", count);
+			printf("The child process counter is %d\n", count);
 		} else {
-			printf("Parent process: counter=%d\n", count);
+			printf("The parent process counter is %d\n", count);
 		}
 		count++;
-		sleep(1);
+		//sleep(1);
 	}
 }

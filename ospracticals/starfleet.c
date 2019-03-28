@@ -25,14 +25,14 @@ int main(void) {
 		exit(1);
 	}
 	
-	printf("spock: ready to receive messages, captain.\n");
+	printf("Starfleet: ready to receive URGENT messages.\n");
 	
 	for(;;) { /* Spock never quits! */
-		if (msgrcv(msqid, &buf, sizeof buf.mtext, 1, 0) == -1) {
+		if (msgrcv(msqid, &buf, sizeof buf.mtext, 2, 0) == -1) {
 			perror("msgrcv");
 			exit(1);
 		}
-		printf("spock: \"%s\"\n", buf.mtext);
+		printf("starfleet: \"%s\"\n", buf.mtext);
 	}
 	
 	return 0;
