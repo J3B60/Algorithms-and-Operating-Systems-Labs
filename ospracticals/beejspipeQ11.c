@@ -11,30 +11,26 @@ int main(void)
 
 	pipe(pfds);//Two pipes
 	
-	if (!fork()) {//3 forks
+	if (!fork()) {//2 forks
 		pipe(ppfds);
 		if (!fork()){
 			close(1);	/* close normal stdout */
-			dup(pfds[1]);	/* make stdout same as pfds[1]  */
-			close(pfds[0]);	/* we don't need this */
-			close(ppfds[1]);
-			close(ppfds[0]);
+			dup(ppfds[1]);	/* make stdout same as pfds[1]  */
+			close(ppfds[0]);	/* we don't need this */
 			execlp("/bin/cat", "/bin/cat", "/etc/passwd", NULL);
 		} else {
 			close(0);	/* close normal stdin */
-			dup(pfds[0]);	/* make stdin same as pfds[0]  */
-			close(pfds[1]);	/* we don't need this */
-			close(1);
-			dup(ppfds[1]);
-			close(ppfds[0]);
+			dup(ppfds[0]);	/* make stdin same as pfds[0]  */
+			close(ppfds[1]);	/* we don't need this */
+			close(1);//Go out to next pipe
+			dup(pfds[1]);
+			close(pfds[0]);
 			execlp("/usr/bin/cut", "/usr/bin/cut", "-f1", "-d:", NULL);
 		}
 	} else {//parent
 		close(0);	/* close normal stdin */
-		close(pfds[1]);
-		close(pfds[0]);
-		dup(ppfds[0]);	/* make stdin same as pfds[0] */
-		close(ppfds[1]);	/* we don't need this */
+		dup(pfds[0]);
+		close(pfds[1]);	/* we don't need this */
 		execlp("/usr/bin/sort", "/usr/bin/sort",  NULL);
 	}
 	
